@@ -22,13 +22,20 @@ def editMatrixIndex(matrix, row, col, val):
     else: return matrix
 matrix1 = np.array(initMatrix(SIZE))
 print(editMatrixIndex(matrix1, 3, 2, .5))
+print(editMatrixIndex(matrix1, 4, 1, .9))
+print(editMatrixIndex(matrix1, 2, 4, .2))
+print(editMatrixIndex(matrix1, 0, 2, .4))
 
 model = keras.Sequential()
 #model.add(keras.layers.Flatten(input_shape=(SIZE, )))
-model.add(keras.layers.Dense(4, activation="relu"))
-model.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
+layer2 = keras.layers.Dense(25, activation="relu")
+model.add(layer2)
+layer3 = keras.layers.Dense(5, activation="sigmoid")
+model.add(layer3)
+layer1 = keras.layers.Dense(1, activation="sigmoid")
+model.add(layer1)
+model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
 
-matrixOut1 = model.predict(matrix1)
 
 
 window = Tk()
@@ -42,8 +49,9 @@ canvas = Canvas(window,
 canvas.pack()
 
 
-(plot, plotCanvas) = embed_plot.embedPlot(window, 0, 300, 2, [], [] )
-def plotMatrix(matrix):
+(plot1, plotCanvas1) = embed_plot.embedPlot(window, 200, 300, 2, [], [] )
+(plot2, plotCanvas2) = embed_plot.embedPlot(window, 0, 300, 2, [], [] )
+def plotMatrix(matrix, plot, plotCanvas):
     (numRows, numCols) = np.shape(matrix)
     inputX = []
     inputY = []
@@ -65,14 +73,30 @@ def plotMatrix(matrix):
     newPoint = plot.scatter(inputX, inputY, color=rgb)
     plt.show()
     created.append(newPoint)
+    plotCanvas.draw()
     canvas.update()
+    
     for obj in created:
-        canvas.delete(obj)
+        obj.remove()
+    
+    
+
+def plotKerasLayer(layer):
+    w = layer.get_weights()[0]
+    print("Weights: ", w)
+    plotMatrix(w)
 
 
 while True:
-    time.sleep(1)
+    time.sleep(.01)
+    #matrixOut1 = model.predict(matrix1)
+    # plotKerasLayer(layer1)
     matrixOut1 = model.predict(matrix1)
-    print(matrixOut1)
-    plotMatrix(matrixOut1)
+    print("Predict: ", matrixOut1)
+    plotMatrix(matrixOut1, plot1, plotCanvas1)
+    trainOut = tf.constant([[50.0,0.,0.,0.,0.]])
+
+    plotMatrix(trainOut, plot2, plotCanvas2)
+    model.fit(tf.constant([matrix1]), trainOut, epochs=10, verbose=0)
+    
     window.update()
