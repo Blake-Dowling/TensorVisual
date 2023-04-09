@@ -67,7 +67,7 @@ def plotMatrix(matrix, plot, plotCanvas):
     color = np.sqrt((points**2))/np.sqrt(2.0)
 
     rgb = plt.get_cmap('jet')(color)
-    inputX.reverse()
+    #inputX.reverse()
     inputY.reverse()
 
     newPoint = plot.scatter(inputX, inputY, color=rgb)
@@ -95,10 +95,10 @@ while True:
     matrixOut1 = model.predict(trainIn)
     print("Predict: ", matrixOut1)
     plotMatrix(matrixOut1, plot1, plotCanvas1)
-    trainOut = 1.0
+    trainOut = 3.0
     # trainOut = tf.constant([[1.0,0.,0.,0.,0.]])
-    #print(tf.constant(matrix1), trainOut)
-    plotMatrix([[trainOut]], plot2, plotCanvas2)
+    print(matrix1)
+    plotMatrix(matrix1, plot2, plotCanvas2)
     
     # print(trainIn.shape, trainOut.shape)
 
