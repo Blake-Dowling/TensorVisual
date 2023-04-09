@@ -20,21 +20,21 @@ def editMatrixIndex(matrix, row, col, val):
         matrix[row][col] = val
         return matrix
     else: return matrix
-matrix1 = np.array(initMatrix(SIZE))
+matrix1 = initMatrix(SIZE)
 print(editMatrixIndex(matrix1, 3, 2, .5))
 print(editMatrixIndex(matrix1, 4, 1, .9))
 print(editMatrixIndex(matrix1, 2, 4, .2))
 print(editMatrixIndex(matrix1, 0, 2, .4))
 
 model = keras.Sequential()
-#model.add(keras.layers.Flatten(input_shape=(SIZE, )))
+layer0 = keras.layers.Flatten(input_shape=(SIZE,SIZE))
+model.add(layer0)
 layer2 = keras.layers.Dense(25, activation="relu")
 model.add(layer2)
-layer3 = keras.layers.Dense(5, activation="sigmoid")
-model.add(layer3)
-layer1 = keras.layers.Dense(1, activation="sigmoid")
+
+layer1 = keras.layers.Dense(5, activation="softmax")
 model.add(layer1)
-model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
+model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
 
 
@@ -91,12 +91,17 @@ while True:
     time.sleep(.01)
     #matrixOut1 = model.predict(matrix1)
     # plotKerasLayer(layer1)
-    matrixOut1 = model.predict(matrix1)
+    trainIn = [matrix1]
+    matrixOut1 = model.predict(trainIn)
     print("Predict: ", matrixOut1)
     plotMatrix(matrixOut1, plot1, plotCanvas1)
-    trainOut = tf.constant([[50.0,0.,0.,0.,0.]])
+    trainOut = 1.0
+    # trainOut = tf.constant([[1.0,0.,0.,0.,0.]])
+    #print(tf.constant(matrix1), trainOut)
+    plotMatrix([[trainOut]], plot2, plotCanvas2)
+    
+    # print(trainIn.shape, trainOut.shape)
 
-    plotMatrix(trainOut, plot2, plotCanvas2)
-    model.fit(tf.constant([matrix1]), trainOut, epochs=10, verbose=0)
+    model.fit(trainIn, [trainOut], epochs=10, verbose=0)
     
     window.update()
